@@ -9,6 +9,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -99,14 +100,15 @@ public class GCMIntentService extends GCMBaseIntentService {
 		}
 		
 		NotificationCompat.Builder mBuilder =
-			new NotificationCompat.Builder(context)
-				.setDefaults(defaults)
-				.setSmallIcon(context.getApplicationInfo().icon)
-				.setWhen(System.currentTimeMillis())
-				.setContentTitle(extras.getString("title"))
-				.setTicker(extras.getString("title"))
-				.setContentIntent(contentIntent)
-				.setAutoCancel(true);
+				new NotificationCompat.Builder(context)
+					.setDefaults(defaults)
+					.setSmallIcon(getResourceId(context, "pushicon", "drawable", context.getPackageName()))
+					.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), getResourceId(context, "icon", "drawable", context.getPackageName())))
+					.setWhen(System.currentTimeMillis())
+					.setContentTitle(extras.getString("title"))
+					.setTicker(extras.getString("title"))
+					.setContentIntent(contentIntent)
+					.setAutoCancel(true);
 
 		String message = extras.getString("message");
 		if (message != null) {
@@ -148,6 +150,16 @@ public class GCMIntentService extends GCMBaseIntentService {
 	@Override
 	public void onError(Context context, String errorId) {
 		Log.e(TAG, "onError - errorId: " + errorId);
+	}
+	
+	public static int getResourceId(Context context, String pVariableName, String pResourcename, String pPackageName) 
+	{
+	    try {
+	        return context.getResources().getIdentifier(pVariableName, pResourcename, pPackageName);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return -1;
+	    } 
 	}
 
 }
